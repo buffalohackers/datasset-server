@@ -1,0 +1,17 @@
+Sections
+	-MediaStream
+		-User video and audio
+	-Signaling
+		-Session control (open and close connections, errors)
+		-Network (IP addresses communication and such)
+		-Media capabilities (codecs and resolutions)
+	-RTCPeerConnection
+	
+Server-side functionality
+	-Signaling
+	-NAT/firewall traversal
+	-A relay server
+
+STUN server
+	-Enables a peer behind a NAT to find out its public address and port
+	-stun.l.google.com

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://webrtc.googlecode.com/svn/trunk/samples/js/base/adapter.js"></script>
+		<script src="http://yui.yahooapis.com/3.10.3/build/yui/yui-min.js"></script>
+		<script src="javascripts/webrtc/webrtc-min.js"></script>
+		<script type="text/javascript">
+			YUI({
+				modules: {
+					socket_io: {
+						fullpath: '/socket.io/socket.io.js'
+					}
+				}
+			}).use('webrtc', function(Y) {
+				var stream = new Y.WebRTC();
+				
+				stream.setLocal('vid1');
+				stream.setRemote('vid2');
+
+				var id = window.location.pathname.match(/\/(\d+)/);
+				if (id !== null) stream.setId(id[1]);
+				
+				stream.startStream('both', function(id) {
+					Y.one('body').append('<a href="/' + id + '" target="_blank">Link to this stream</a>');
+
+					stream.setDataChannelCallback(function(message) {
+						Y.one('body').append('<br>' + message.data);
+					});
+				});
+
+				Y.one('#pause').on('click', function() {
+					if (stream.isStreaming())
+						stream.pause();
+					else
+						stream.resume();
+				});
+
+				Y.one('#sendMessage').on('click', function() {
+					stream.send(Y.one('#message').get('value'));
+				});
+				
+			});
+		</script>
+	</head>
+	<body>
+		<div id="container">
+		  	<video id="vid1" width="400px" autoplay></video>
+			<video id="vid2" width="400px" autoplay></video><br>
+			<input type="button" id="pause" value="pause/play">
+			<input type="text" id="message">
+			<input type="button" id="sendMessage" value="send">
+		</div>
+	</body>
+</html>
