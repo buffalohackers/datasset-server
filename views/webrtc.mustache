@@ -15,40 +15,27 @@
 				var stream = new Y.WebRTC();
 				
 				stream.setLocal('vid1');
-				stream.setRemote('vid2');
 
 				var id = window.location.pathname.match(/\/(\d+)/);
 				if (id !== null) stream.setId(id[1]);
+
+				var numStreams = 1;
+
+				stream.onConnection(function() {
+					numStreams++;
+					Y.one('#streams').append('<video id="vid' + numStreams + '" width="400px" autoplay></video>');
+					stream.addRemote('vid' + numStreams);
+				});
 				
 				stream.startStream('both', function(id) {
 					Y.one('body').append('<a href="/' + id + '" target="_blank">Link to this stream</a>');
-
-					stream.setDataChannelCallback(function(message) {
-						Y.one('body').append('<br>' + message.data);
-					});
 				});
-
-				Y.one('#pause').on('click', function() {
-					if (stream.isStreaming())
-						stream.pause();
-					else
-						stream.resume();
-				});
-
-				Y.one('#sendMessage').on('click', function() {
-					stream.send(Y.one('#message').get('value'));
-				});
-				
 			});
 		</script>
 	</head>
 	<body>
-		<div id="container">
+		<div id="streams">
 		  	<video id="vid1" width="400px" autoplay></video>
-			<video id="vid2" width="400px" autoplay></video><br>
-			<input type="button" id="pause" value="pause/play">
-			<input type="text" id="message">
-			<input type="button" id="sendMessage" value="send">
 		</div>
 	</body>
 </html>

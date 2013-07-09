@@ -17,7 +17,7 @@ app.set('views', __dirname + '/views');
 app.engine('mustache', mu2Express.engine);
 app.set('view engine', 'mustache');
 app.use(express.favicon());
-app.use(express.logger('dev'));
+//app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
@@ -36,40 +36,38 @@ var sockets = {};
 
 io.sockets.on('connection', function (socket) {
 	socket.on('desc', function(data) {
-		//up to sockets.length-2 because sockets[sockets.length-1] is the current socket.
-		for (var i = 0;i < sockets[data.id].length-1;i++) {
-			sockets[data.id][i].emit('add_desc', {'id': data.id, 'client_id': data.client_id, 'desc': data.desc});
-
-			for (var j = 0;j < sessions[data.id][i]['cand'].length;j++) {
-				sockets[data.id][sockets[data.id].length-1].emit('add_cand', {'cand': sessions[data.id][i]['cand'][j]});
-			}
+		if (data.client_id !== undefined) {
+			console.log('sending' + data.client_id);
+			sockets[data.id][data.client_id].emit('add_desc', data);
 		}
+		// //up to sockets.length-2 because sockets[sockets.length-1] is the current socket.
+		// for (var i = 0;i < sockets[data.id].length-2;i++) {
+		// 	sockets[data.id][i].emit('add_desc', data);
+
+		// 	// for (var j = 0;j < sessions[data.id][i]['cand'].length;j++) {
+		// 	// 	sockets[data.id][sockets[data.id].length-1].emit('add_cand', {'cand': sessions[data.id][i]['cand'][j], 'numConn': data.client_id});
+		// 	// }
+		// }
 		
-		sessions[data.id][data.client_id]['desc'] = data.desc;
+		sessions[data.id][data.client_id].desc = data.desc;
 	});
 
 	socket.on('cand', function(data) {
 		//up to sockets.length-2 because sockets[sockets.length-1] is the current socket.
-		for (var i = 0;i < sockets[data.id].length-1;i++) {
-			sockets[data.id][i].emit('add_cand', {'cand': data.cand});
-		}
-		sessions[data.id][data.client_id]['cand'].push(data.cand);
-	});
-
-	socket.on('create_room', function(data) {
-		
+		//for (var i = 0;i < sockets[data.id].length-1;i++) {
+			sockets[data.id][data.client_id].emit('add_cand', {'cand': data.cand, 'client_id': data.from_client_id});
+		//}
+		//sessions[data.id][data.client_id]['cand'].push(data.cand);
 	});
 
 	socket.on('join', function(data) {
-		console.log('JOIN');
 		if (data.id !== '' && sockets[data.id] !== undefined) {
 			client_id = sockets[data.id].length;
 			id = data.id;
 
-			console.log(sessions);
-			for (var i = 0;i < sessions[data.id].length;i++) {
-				socket.emit('add_desc', {'id': data.id, 'client_id': client_id, 'desc': sessions[data.id][i].desc});
-			}
+			// for (var i = 0;i < sessions[data.id].length;i++) {
+			// 	socket.emit('add_desc', {'id': data.id, 'client_id': i, 'desc': sessions[data.id][i].desc});
+			// }
 		} else {
 			var id;
 			do {
@@ -86,6 +84,12 @@ io.sockets.on('connection', function (socket) {
 		sessions[id].push({'client_id': client_id, 'desc': '', 'cand': []});
 		sockets[id].push(socket);
 		socket.emit('joined', {'client_id': client_id, 'id': id});
+
+		// if (data.id !== '' && sockets[data.id] !== undefined) {
+		// 	for (var i = 0;i < sessions[data.id].length;i++) {
+		// 		socket.emit('add_desc', {'id': data.id, 'client_id': i, 'desc': sessions[data.id][i].desc});
+		// 	}
+		// }
 	});
 });
 
