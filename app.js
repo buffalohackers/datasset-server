@@ -40,56 +40,30 @@ io.sockets.on('connection', function (socket) {
 			console.log('sending' + data.client_id);
 			sockets[data.id][data.client_id].emit('add_desc', data);
 		}
-		// //up to sockets.length-2 because sockets[sockets.length-1] is the current socket.
-		// for (var i = 0;i < sockets[data.id].length-2;i++) {
-		// 	sockets[data.id][i].emit('add_desc', data);
-
-		// 	// for (var j = 0;j < sessions[data.id][i]['cand'].length;j++) {
-		// 	// 	sockets[data.id][sockets[data.id].length-1].emit('add_cand', {'cand': sessions[data.id][i]['cand'][j], 'numConn': data.client_id});
-		// 	// }
-		// }
-		
-		sessions[data.id][data.client_id].desc = data.desc;
 	});
 
 	socket.on('cand', function(data) {
-		//up to sockets.length-2 because sockets[sockets.length-1] is the current socket.
-		//for (var i = 0;i < sockets[data.id].length-1;i++) {
-			sockets[data.id][data.client_id].emit('add_cand', {'cand': data.cand, 'client_id': data.from_client_id});
-		//}
-		//sessions[data.id][data.client_id]['cand'].push(data.cand);
+		sockets[data.id][data.client_id].emit('add_cand', {'cand': data.cand, 'client_id': data.from_client_id});
 	});
 
 	socket.on('join', function(data) {
 		if (data.id !== '' && sockets[data.id] !== undefined) {
 			client_id = sockets[data.id].length;
 			id = data.id;
-
-			// for (var i = 0;i < sessions[data.id].length;i++) {
-			// 	socket.emit('add_desc', {'id': data.id, 'client_id': i, 'desc': sessions[data.id][i].desc});
-			// }
 		} else {
 			var id;
 			do {
 				id = Math.floor(Math.random()*1000000);
-			} while (id in sessions);
+			} while (id in sockets);
 
 			client_id = 0;
 		}
 
-		if (sessions[id] === undefined) {
-			sessions[id] = [];
+		if (sockets[id] === undefined) {
 			sockets[id] = [];
 		}
-		sessions[id].push({'client_id': client_id, 'desc': '', 'cand': []});
 		sockets[id].push(socket);
 		socket.emit('joined', {'client_id': client_id, 'id': id});
-
-		// if (data.id !== '' && sockets[data.id] !== undefined) {
-		// 	for (var i = 0;i < sessions[data.id].length;i++) {
-		// 		socket.emit('add_desc', {'id': data.id, 'client_id': i, 'desc': sessions[data.id][i].desc});
-		// 	}
-		// }
 	});
 });
 
