@@ -17,7 +17,7 @@ app.set('views', __dirname + '/views');
 app.engine('mustache', mu2Express.engine);
 app.set('view engine', 'mustache');
 app.use(express.favicon());
-//app.use(express.logger('dev'));
+app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
@@ -34,10 +34,10 @@ app.get('/:id', routes.webrtc);
 var sessions = {};
 var sockets = {};
 
+//io.set('log level', 1);
 io.sockets.on('connection', function (socket) {
 	socket.on('desc', function(data) {
 		if (data.client_id !== undefined) {
-			console.log('sending' + data.client_id);
 			sockets[data.id][data.client_id].emit('add_desc', data);
 		}
 	});
@@ -57,11 +57,9 @@ io.sockets.on('connection', function (socket) {
 			} while (id in sockets);
 
 			client_id = 0;
-		}
-
-		if (sockets[id] === undefined) {
 			sockets[id] = [];
 		}
+
 		sockets[id].push(socket);
 		socket.emit('joined', {'client_id': client_id, 'id': id});
 	});

@@ -29,57 +29,18 @@
 				
 				stream.startStream('both', function(id) {
 					Y.one('body').append('<a href="/' + id + '" target="_blank">Link to this stream</a>');
-
-					stream.onMessage(function(message) {
-						Y.one('body').append('<br>' + message.data);
-					});
 				});
 
-				Y.one('#pause').on('click', function() {
-					if (stream.isStreaming())
-						stream.pause();
-					else
-						stream.resume();
+				Y.one('#fileInput').on('change', function() {
+					stream.sendFile('fileInput');
 				});
-
-				Y.one('#sendMessage').on('click', function() {
-					stream.send(Y.one('#message').get('value'));
-				});
-
-				// moca
-				// jasmen
-				// arrow - functional
-				// vows
-
-				// videoStream.muteLocal();
-				// videoStream.muteRemote();
-				// videoStream.mute();
-				// videoStream.pauseLocal();
-				// videoStream.pauseRemote();
-				// videoStream.pause();
-				// videoStream.resumeLocal();
-				// videoStream.resumeRemote();
-				// videoStream.resume();
-				// videoStream.getID();
-				// videoStream.setID('room id');
-				// videoStream.setICEServers({'stun:stun.l.google.com:19302'});
-
-				// videoStream.send('test');
-				// videoStream.on('message', function(data) {
-
-				// });
-				
 			});
 		</script>
 	</head>
 	<body>
-		<div id="container">
-			<div id="streams">
-			  	<video id="vid1" width="400px" autoplay></video>
-			</div>
-			<input type="button" id="pause" value="pause/play">
-			<input type="text" id="message">
-			<input type="button" id="sendMessage" value="send">
+		<div id="streams">
+		  	<video id="vid1" width="400px" autoplay></video>
 		</div>
+		<input type="file" id="fileInput"><br>
 	</body>
 </html>
