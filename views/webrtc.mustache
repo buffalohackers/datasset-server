@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<script src="http://webrtc.googlecode.com/svn/trunk/samples/js/base/adapter.js"></script>
-		<script src="http://yui.yahooapis.com/3.10.3/build/yui/yui-min.js"></script>
-		<script src="javascripts/webrtc/webrtc-min.js"></script>
+		<script src="http://yui.yahooapis.com/3.11.0/build/yui/yui-min.js"></script>
+		<script src="javascripts/webrtc/webrtc.js"></script>
 		<script type="text/javascript">
 			YUI({
 				modules: {
@@ -11,7 +11,7 @@
 						fullpath: '/socket.io/socket.io.js'
 					}
 				}
-			}).use('webrtc', function(Y) {
+			}).use('webrtc', 'node-event-simulate', function(Y) {
 				var stream = new Y.WebRTC();
 				
 				stream.setLocal('vid1');

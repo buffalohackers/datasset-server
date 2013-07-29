@@ -37,9 +37,7 @@ var sockets = {};
 //io.set('log level', 1);
 io.sockets.on('connection', function (socket) {
 	socket.on('desc', function(data) {
-		if (data.client_id !== undefined) {
-			sockets[data.id][data.client_id].emit('add_desc', data);
-		}
+		sockets[data.id][data.client_id].emit('add_desc', data);
 	});
 
 	socket.on('cand', function(data) {
