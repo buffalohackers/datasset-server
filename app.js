@@ -48,7 +48,11 @@ io.sockets.on('connection', function (socket) {
 		if (data.id !== '' && sockets[data.id] !== undefined) {
 			client_id = sockets[data.id].length;
 			id = data.id;
-		} else {
+		} else if (data.id != '') {
+            id = data.id;
+            client_id = 0;
+            sockets[id] = [];
+        } else {
 			var id;
 			do {
 				id = Math.floor(Math.random()*1000000);

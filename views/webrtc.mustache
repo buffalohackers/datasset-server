@@ -1,54 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="http://yui.yahooapis.com/3.11.0/build/yui/yui-min.js"></script>
-		<script src="javascripts/webrtc/webrtc.js"></script>
-		<script type="text/javascript">
-			YUI({
-				modules: {
-					socket_io: {
-						fullpath: '/socket.io/socket.io.js'
-					}
-				}
-			}).use('webrtc', 'escape', function(Y) {
-                var stream = new Y.WebRTC(),
-                    numConn = 1,
-				    id = window.location.pathname.match(/\/(\d+)/);
-
-				if (id !== null) stream.setId(id[1]);
-
-                stream.setLocal('vid1');
-
-				stream.startStream('both', function(id) {
-					Y.one('body').append('<a href="/' + id + '" target="_blank">Link to this stream</a>');
-
-					stream.on('message', function(data) {
-				    	Y.one('body').append('<br>' + Y.Escape.html(data.message));
-					});
-
-                    Y.one('#sendMessage').on('click', function() {
-                        stream.send(Y.one('#dataDemo').get('value'));
-                    });
-
-                    Y.one('#fileInput').on('change', function() {
-                        stream.sendFile('fileInput');
-                    });
-
-                    stream.on('newConnection', function() {
-                        numConn++;
-                        Y.one('#streams').append('<video id="vid' + numConn + '" width="200px"></video>');
-                        stream.addRemote('vid' + numConn);
-                    });
-				});
-			});
-		</script>
+        <script src="/socket.io/socket.io.js"></script>
+		<script src="/js/datasset.js"></script>
 	</head>
 	<body>
-        <div id="streams">
-            <video id="vid1" width="200px"></video>
-        </div>
-        <input type="text" id="dataDemo">
-        <input type="submit" id="sendMessage" value="Send"><br>
-        <input type="file" id="fileInput">
 	</body>
 </html>
